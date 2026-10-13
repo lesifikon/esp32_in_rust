@@ -38,8 +38,7 @@ fn main() -> ! {
     esp_println::logger::init_logger_from_env();
 
     let config = esp_hal::Config::default().with_cpu_clock(CpuClock::max());
-    // let peripherals = esp_hal::init(config);
-    let peripherals = esp_hal::init(esp_hal::Config::default());
+    let peripherals = esp_hal::init(config);
 
     // The following pins are used to bootstrap the chip. They are available
     // for use, but check the datasheet of the module for more information on them.
@@ -58,29 +57,10 @@ fn main() -> ! {
     let _gpio16 = peripherals.GPIO16;
     let _gpio20 = peripherals.GPIO20;
 
-
-    let mut led = Output::new(peripherals.GPIO2, Level::Low, OutputConfig::default());
-    let button = Input::new(peripherals.GPIO0, InputConfig::default());
-
-    // led.set_high();
-    //
-    // let delay = Delay::new();
-
     loop {
-        if button.is_high() {
-            led.set_high();
-        } else {
-            led.set_low();
-            info!("Роберт любит лизу!");
-            let delay_start = Instant::now();
-            while delay_start.elapsed() < Duration::from_millis(1500) {}
-        }
-
-        // led.toggle();
-        // delay.delay_millis(500);
-        // info!("Роберт любит лизу!");
-        // let delay_start = Instant::now();
-        // while delay_start.elapsed() < Duration::from_millis(500) {}
+        info!("Роберт любит лизу!");
+        let delay_start = Instant::now();
+        while delay_start.elapsed() < Duration::from_millis(500) {}
     }
 
     // for inspiration have a look at the examples at https://github.com/esp-rs/esp-hal/tree/esp-hal-v1.2.2/examples
