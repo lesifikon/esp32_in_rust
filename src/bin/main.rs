@@ -10,10 +10,10 @@
 use esp_hal::clock::CpuClock;
 use esp_hal::{
     delay::Delay,
-    gpio::{Input, InputConfig, Level, Output, OutputConfig},
+    gpio::{Io, Level, Output, OutputConfig, Input, InputConfig},
+    time::{Duration, Instant},
     main,
 };
-use esp_hal::time::{Duration, Instant};
 use log::{error, info};
 
 #[panic_handler]
@@ -57,11 +57,67 @@ fn main() -> ! {
     let _gpio16 = peripherals.GPIO16;
     let _gpio20 = peripherals.GPIO20;
 
+    // let lov = [1, 1, 0, 0, 1, 2, 1, 1, 0, 2, 2, 2, 0, 1, 1, 1, 2, 0, 0, 1, 1, 2];
+
+    let mut led = Output::new(peripherals.GPIO2, Level::High, OutputConfig::default());
+    let button = Input::new(peripherals.GPIO0, InputConfig::default());
+
+    let delay = Delay::new();
+
     loop {
-        info!("Роберт любит лизу!");
-        let delay_start = Instant::now();
-        while delay_start.elapsed() < Duration::from_millis(500) {}
+        if button.is_high() {
+            led.set_low()
+        } else {
+            // I
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            delay.delay_millis(3000);
+            // L
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 1500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(3000);
+            // 0
+            morse_code(&mut led, delay, 1500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 1500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 1500);
+            delay.delay_millis(3000);
+            // v
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 1500);
+            delay.delay_millis(3000);
+            // u
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 500);
+            delay.delay_millis(500);
+            morse_code(&mut led, delay, 1500);
+
+        }
+        // led.toggle();
+         // info!("Роберт любит лизу!");
+        // let delay_start = Instant::now();
+        // while delay_start.elapsed() < Duration::from_millis(500) {}
     }
 
     // for inspiration have a look at the examples at https://github.com/esp-rs/esp-hal/tree/esp-hal-v1.2.2/examples
+}
+
+fn morse_code(led: &mut Output<'_>, delay: Delay, time: u32) {
+    led.set_high();
+    delay.delay_millis(time);
+    led.set_low()
 }
